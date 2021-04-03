@@ -19,13 +19,16 @@ class DbHelper{
   }
 
   void _createDb(Database db, int version) async{
-    await db.execute('''
+    var batchTemp = db.batch();
+    // ignore: await_only_futures
+    await batchTemp.execute('''
         CREATE TABLE kategori (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT
         )
      ''');
-    await db.execute('''
+    // ignore: await_only_futures
+    await batchTemp.execute('''
         CREATE TABLE konten (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         idKategori INTEGER NOT NULL,
@@ -35,6 +38,7 @@ class DbHelper{
         FOREIGN KEY(idKategori) REFERENCES kategori(id) ON DELETE CASCADE ON UPDATE CASCADE
         )
      ''');
+     batchTemp.commit();
 
      await db.insert("kategori", {
        "title" : "Task"
